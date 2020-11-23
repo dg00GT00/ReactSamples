@@ -1,8 +1,7 @@
 import * as React from "react";
-import logo from "./logo.svg";
+import logo from "../logo.svg";
 import "./App.css";
-import Person from "./Person/Person";
-import person from "./Person/Person";
+import Person from "../Components/Persons/Person/Person";
 
 type NameState = {
 	persons: { name: string; age: number }[];
