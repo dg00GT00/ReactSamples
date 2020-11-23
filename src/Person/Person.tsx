@@ -1,5 +1,5 @@
 import * as React from "react";
-import "./Person.css"
+import styles from "./Person.module.css";
 
 type PersonProps = {
 	name: string;
@@ -9,9 +9,15 @@ type PersonProps = {
 };
 
 const person: React.FunctionComponent<PersonProps> = (props) => {
+	const rnd = Math.random();
+
+	if (rnd > 0.7) {
+		throw new Error("Something went wrong");
+    }
+    
 	return (
 		<React.Fragment>
-			<p onClick={props.click} className={"Person"}>
+			<p onClick={props.click} className={styles.Person}>
 				I'm {props.name} and I'm {props.age} years old!
 			</p>
 			<p>{props.children}</p>

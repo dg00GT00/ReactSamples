@@ -2,7 +2,7 @@ import * as React from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import Person from "./Person/Person";
-import person from "./Person/Person";
+import ErrorBoundary from "./ErrorBoundary/ErrorBoundary"
 
 type NameState = {
 	persons: { name: string; age: number }[];
@@ -19,7 +19,10 @@ class App extends React.Component<{}, NameState> {
 		showPersons: false,
 	};
 
-	nameChangedHandler: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+	nameChangedHandler = (
+		e: React.ChangeEvent<HTMLInputElement>,
+		id: number
+	): void => {
 		this.setState({
 			persons: [
 				{ name: "Gledson", age: 23 },
@@ -37,7 +40,7 @@ class App extends React.Component<{}, NameState> {
 	};
 
 	deletePersonHandler = (index: number): void => {
-        // Need to create a copy before updating the state
+		// Need to create a copy before updating the state
 		const persons = [...this.state.persons];
 		persons.splice(index, 1);
 		this.setState({ persons });
@@ -45,7 +48,8 @@ class App extends React.Component<{}, NameState> {
 
 	render(): JSX.Element {
 		const style = {
-			backgroundColor: "white",
+			backgroundColor: "green",
+			color: "white",
 			font: "inherit",
 			border: "1px solid blue",
 			padding: "8px",
@@ -55,8 +59,10 @@ class App extends React.Component<{}, NameState> {
 		let persons = null;
 
 		if (this.state.showPersons) {
+            style.backgroundColor = "red";
+            
 			persons = (
-				<React.Fragment>
+				<ErrorBoundary>
 					{this.state.persons.map((person, index) => {
 						return (
 							<Person
@@ -64,13 +70,13 @@ class App extends React.Component<{}, NameState> {
 								name={person.name}
 								age={person.age}
 								click={this.deletePersonHandler.bind(this, index)}
-								changed={this.nameChangedHandler}
+								changed={(e) => this.nameChangedHandler(e, index)}
 							>
 								With this hobbies
 							</Person>
 						);
 					})}
-				</React.Fragment>
+				</ErrorBoundary>
 			);
 		}
 
