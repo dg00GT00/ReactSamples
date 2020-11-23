@@ -7,17 +7,17 @@ type NameState = {
 	persons: { name: string; age: number }[];
 };
 
-class App extends React.Component<{}, NameState> {
-	state: NameState = {
+const App = () => {
+	const [personsStates, setPersonsState] = React.useState<NameState>({
 		persons: [
 			{ name: "Gledson", age: 23 },
 			{ name: "Michelle", age: 43 },
 			{ name: "Ritall", age: 64 },
 		],
-	};
+	});
 
-	switchHandler = () => {
-		this.setState({
+	const switchHandler = (): void => {
+		setPersonsState({
 			persons: [
 				{ name: "Gledson", age: 23 },
 				{ name: "Michelle", age: 43 },
@@ -26,22 +26,20 @@ class App extends React.Component<{}, NameState> {
 		});
 	};
 
-	render(): JSX.Element {
-		return (
-			<div className="App">
-				<header className="App-header">
-					<img src={logo} className="App-logo" alt="logo" />
-					<p>
-						Edit <code>src/App.tsx</code> and save to reload.
-					</p>
-					<button onClick={this.switchHandler}>Switch name</button>
-					<Person name={this.state.persons[2].name} age={31}>
-						With this hobbies
-					</Person>
-				</header>
-			</div>
-		);
-	}
-}
+	return (
+		<div className="App">
+			<header className="App-header">
+				<img src={logo} className="App-logo" alt="logo" />
+				<p>
+					Edit <code>src/App.tsx</code> and save to reload.
+				</p>
+				<button onClick={switchHandler}>Switch name</button>
+				<Person name={personsStates.persons[2].name} age={31}>
+					With this hobbies
+				</Person>
+			</header>
+		</div>
+	);
+};
 
 export default App;
