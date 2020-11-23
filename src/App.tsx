@@ -16,12 +16,22 @@ class App extends React.Component<{}, NameState> {
 		],
 	};
 
-	switchHandler = () => {
+	nameChangedHandler: React.ChangeEventHandler<HTMLInputElement> = (e) => {
 		this.setState({
 			persons: [
 				{ name: "Gledson", age: 23 },
 				{ name: "Michelle", age: 43 },
-				{ name: "Tonny", age: 64 },
+				{ name: e.currentTarget.value, age: 64 },
+			],
+		});
+	};
+
+	switchHandler = (name: string) => {
+		this.setState({
+			persons: [
+				{ name: "Gledson", age: 23 },
+				{ name: "Michelle", age: 43 },
+				{ name: name, age: 64 },
 			],
 		});
 	};
@@ -34,8 +44,15 @@ class App extends React.Component<{}, NameState> {
 					<p>
 						Edit <code>src/App.tsx</code> and save to reload.
 					</p>
-					<button onClick={this.switchHandler}>Switch name</button>
-					<Person name={this.state.persons[2].name} age={31}>
+					<button onClick={() => this.switchHandler("John")}>
+						Switch name
+					</button>
+					<Person
+						name={this.state.persons[2].name}
+						age={31}
+						click={this.switchHandler.bind(this, "Mary")}
+						changed={this.nameChangedHandler}
+					>
 						With this hobbies
 					</Person>
 				</header>
