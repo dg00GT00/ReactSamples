@@ -2,6 +2,7 @@ import * as React from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import Person from "./Person/Person";
+import person from "./Person/Person";
 
 type NameState = {
 	persons: { name: string; age: number }[];
@@ -28,21 +29,18 @@ class App extends React.Component<{}, NameState> {
 		});
 	};
 
-	switchHandler = (name: string) => {
-		this.setState({
-			persons: [
-				{ name: "Gledson", age: 23 },
-				{ name: "Michelle", age: 43 },
-				{ name: name, age: 64 },
-			],
-		});
-	};
-
 	togglePersonHandler = (): void => {
 		const doesShow = this.state.showPersons;
 		this.setState({
 			showPersons: !doesShow,
 		});
+	};
+
+	deletePersonHandler = (index: number): void => {
+        // Need to create a copy before updating the state
+		const persons = [...this.state.persons];
+		persons.splice(index, 1);
+		this.setState({ persons });
 	};
 
 	render(): JSX.Element {
@@ -52,29 +50,26 @@ class App extends React.Component<{}, NameState> {
 			border: "1px solid blue",
 			padding: "8px",
 			cursor: "pointer",
-        };
-        
-        let persons = null;
-        
+		};
+
+		let persons = null;
+
 		if (this.state.showPersons) {
 			persons = (
 				<React.Fragment>
-					<Person
-						name={this.state.persons[1].name}
-						age={31}
-						click={this.switchHandler.bind(this, "Mary")}
-						changed={this.nameChangedHandler}
-					>
-						With this hobbies
-					</Person>
-					<Person
-						name={this.state.persons[2].name}
-						age={31}
-						click={this.switchHandler.bind(this, "Kate")}
-						changed={this.nameChangedHandler}
-					>
-						With other hobbies
-					</Person>
+					{this.state.persons.map((person, index) => {
+						return (
+							<Person
+								key={index}
+								name={person.name}
+								age={person.age}
+								click={this.deletePersonHandler.bind(this, index)}
+								changed={this.nameChangedHandler}
+							>
+								With this hobbies
+							</Person>
+						);
+					})}
 				</React.Fragment>
 			);
 		}
