@@ -23,7 +23,7 @@ class App extends React.Component<{}, NameState> {
 			persons: [
 				{ name: "Gledson", age: 23 },
 				{ name: "Michelle", age: 43 },
-				{ name: e.currentTarget.value, age: 64 },
+				{ name: e.target.value, age: 64 },
 			],
 		});
 	};
@@ -52,7 +52,32 @@ class App extends React.Component<{}, NameState> {
 			border: "1px solid blue",
 			padding: "8px",
 			cursor: "pointer",
-		};
+        };
+        
+        let persons = null;
+        
+		if (this.state.showPersons) {
+			persons = (
+				<React.Fragment>
+					<Person
+						name={this.state.persons[1].name}
+						age={31}
+						click={this.switchHandler.bind(this, "Mary")}
+						changed={this.nameChangedHandler}
+					>
+						With this hobbies
+					</Person>
+					<Person
+						name={this.state.persons[2].name}
+						age={31}
+						click={this.switchHandler.bind(this, "Kate")}
+						changed={this.nameChangedHandler}
+					>
+						With other hobbies
+					</Person>
+				</React.Fragment>
+			);
+		}
 
 		return (
 			<div className="App">
@@ -64,16 +89,7 @@ class App extends React.Component<{}, NameState> {
 					<button onClick={this.togglePersonHandler} style={style}>
 						Switch name
 					</button>
-					{this.state.showPersons ? (
-						<Person
-							name={this.state.persons[2].name}
-							age={31}
-							click={this.switchHandler.bind(this, "Mary")}
-							changed={this.nameChangedHandler}
-						>
-							With this hobbies
-						</Person>
-					) : null}
+					{persons}
 				</header>
 			</div>
 		);
