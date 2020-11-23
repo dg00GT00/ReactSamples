@@ -5,6 +5,7 @@ import Person from "./Person/Person";
 
 type NameState = {
 	persons: { name: string; age: number }[];
+	showPersons: boolean;
 };
 
 class App extends React.Component<{}, NameState> {
@@ -14,6 +15,7 @@ class App extends React.Component<{}, NameState> {
 			{ name: "Michelle", age: 43 },
 			{ name: "Ritall", age: 64 },
 		],
+		showPersons: false,
 	};
 
 	nameChangedHandler: React.ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -36,13 +38,20 @@ class App extends React.Component<{}, NameState> {
 		});
 	};
 
+	togglePersonHandler = (): void => {
+		const doesShow = this.state.showPersons;
+		this.setState({
+			showPersons: !doesShow,
+		});
+	};
+
 	render(): JSX.Element {
 		const style = {
 			backgroundColor: "white",
 			font: "inherit",
 			border: "1px solid blue",
-            padding: "8px",
-            cursor: "pointer"
+			padding: "8px",
+			cursor: "pointer",
 		};
 
 		return (
@@ -52,17 +61,19 @@ class App extends React.Component<{}, NameState> {
 					<p>
 						Edit <code>src/App.tsx</code> and save to reload.
 					</p>
-					<button onClick={() => this.switchHandler("John")} style={style}>
+					<button onClick={this.togglePersonHandler} style={style}>
 						Switch name
 					</button>
-					<Person
-						name={this.state.persons[2].name}
-						age={31}
-						click={this.switchHandler.bind(this, "Mary")}
-						changed={this.nameChangedHandler}
-					>
-						With this hobbies
-					</Person>
+					{this.state.showPersons ? (
+						<Person
+							name={this.state.persons[2].name}
+							age={31}
+							click={this.switchHandler.bind(this, "Mary")}
+							changed={this.nameChangedHandler}
+						>
+							With this hobbies
+						</Person>
+					) : null}
 				</header>
 			</div>
 		);
