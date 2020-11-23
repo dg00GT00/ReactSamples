@@ -1,4 +1,5 @@
 import * as React from "react";
+import "./Person.css"
 
 type PersonProps = {
 	name: string;
@@ -10,7 +11,7 @@ type PersonProps = {
 const person: React.FunctionComponent<PersonProps> = (props) => {
 	return (
 		<React.Fragment>
-			<p onClick={props.click}>
+			<p onClick={props.click} className={"Person"}>
 				I'm {props.name} and I'm {props.age} years old!
 			</p>
 			<p>{props.children}</p>

@@ -37,6 +37,14 @@ class App extends React.Component<{}, NameState> {
 	};
 
 	render(): JSX.Element {
+		const style = {
+			backgroundColor: "white",
+			font: "inherit",
+			border: "1px solid blue",
+            padding: "8px",
+            cursor: "pointer"
+		};
+
 		return (
 			<div className="App">
 				<header className="App-header">
@@ -44,7 +52,7 @@ class App extends React.Component<{}, NameState> {
 					<p>
 						Edit <code>src/App.tsx</code> and save to reload.
 					</p>
-					<button onClick={() => this.switchHandler("John")}>
+					<button onClick={() => this.switchHandler("John")} style={style}>
 						Switch name
 					</button>
 					<Person
