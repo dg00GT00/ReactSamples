@@ -2,9 +2,13 @@ import * as React from "react";
 
 import "./Post.css";
 
-const post: React.FunctionComponent = (props) => (
+type PostsProps = {
+	title: string;
+};
+
+const post: React.FunctionComponent<PostsProps> = (props) => (
 	<article className="Post">
-		<h1>Title</h1>
+		<h1>{props.title}</h1>
 		<div className="Info">
 			<div className="Author">Author</div>
 		</div>
