@@ -22,12 +22,9 @@ class Posts extends React.Component<RouteComponentProps, BlogState> {
 		author: "",
 	};
 
-	postSelectedHandler = (id: number) => {};
 	componentDidMount() {
-		console.log(this.props);
-
 		axios
-			.get<PostsType[]>("https://jsonplaceholder.typicode.com/posts")
+			.get<PostsType[]>("/posts")
 			.then((response) => {
 				const posts = response.data.slice(0, 4);
 				const updatedPosts = posts.map((post) => {
@@ -44,7 +41,7 @@ class Posts extends React.Component<RouteComponentProps, BlogState> {
 		const posts = this.state.posts.map((post) => {
 			return (
 				<Link to={"/" + post.id} key={post.id}>
-					<Post title={post.title} author={post.author} />
+					<Post title={post.title} author={post.author} body={post.body} />
 				</Link>
 			);
 		});

@@ -13,11 +13,10 @@ class NewPost extends React.Component<RouteComponentProps, NewPostState> {
 	state: NewPostState = {
 		title: "",
 		content: "",
-		author: "Max",
+		author: "",
 	};
 
 	componentDidMount(): void {
-		console.log(this.props);
 	}
 
 	render() {

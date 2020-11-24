@@ -6,12 +6,12 @@ import "./Post.css";
 type PostsProps = {
 	title: string;
     author: string;
+    body: string;
 };
 
 const post: React.FunctionComponent<
 	RouteComponentProps<PostsProps> & PostsProps
 > = (props) => {
-	console.log(props);
 	return (
 		<article className="Post">
 			<h1>{props.title}</h1>

@@ -1,10 +1,12 @@
 import * as React from "react";
-import { Route, NavLink } from "react-router-dom";
+import { Route, NavLink, Switch } from "react-router-dom";
 import Posts from "../Posts/Posts";
 import NewPost from "../NewPost/NewPost";
 import FullPosts from "../FullPost/FullPost";
+import { PostParams } from "../../Route/Params/PostParams";
 import "./Blog.css";
 
+const postParams: PostParams = { id: "id" };
 class Blog extends React.Component {
 	render() {
 		return (
@@ -31,9 +33,11 @@ class Blog extends React.Component {
 						</ul>
 					</nav>
 				</header>
-				<Route path={"/"} exact component={Posts} />
-				<Route path={"/new-post"} component={NewPost} />
-				<Route path={"/:id"} component={FullPosts} />
+				<Switch>
+					<Route path={"/"} exact component={Posts} />
+					<Route path={"/new-post"} component={NewPost} />
+					<Route path={"/:" + postParams.id} exact component={FullPosts} />
+				</Switch>
 			</div>
 		);
 	}
