@@ -1,6 +1,7 @@
 import * as React from "react";
 import axios from "axios";
 import Post from "../../components/Post/Post";
+import { RouteComponentProps } from "react-router-dom";
 
 type BlogState = {
 	posts: PostsType[];
@@ -15,13 +16,15 @@ type PostsType = {
 	author: string;
 };
 
-class Posts extends React.Component<{}, BlogState> {
+class Posts extends React.Component<RouteComponentProps, BlogState> {
 	state: BlogState = {
 		posts: [],
 		author: "",
 	};
 
 	componentDidMount() {
+		console.log(this.props);
+
 		axios
 			.get<PostsType[]>("https://jsonplaceholder.typicode.com/posts")
 			.then((response) => {

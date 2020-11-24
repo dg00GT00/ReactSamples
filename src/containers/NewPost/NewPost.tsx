@@ -1,4 +1,5 @@
 import * as React from "react";
+import { RouteComponentProps } from "react-router-dom";
 
 import "./NewPost.css";
 
@@ -8,12 +9,16 @@ type NewPostState = {
 	author: string;
 };
 
-class NewPost extends React.Component<{}, NewPostState> {
+class NewPost extends React.Component<RouteComponentProps, NewPostState> {
 	state: NewPostState = {
 		title: "",
 		content: "",
 		author: "Max",
 	};
+
+	componentDidMount(): void {
+		console.log(this.props);
+	}
 
 	render() {
 		return (
@@ -36,8 +41,8 @@ class NewPost extends React.Component<{}, NewPostState> {
 					value={this.state.author}
 					onChange={(event) => this.setState({ author: event.target.value })}
 				>
-					<option value="Max">Max</option>
-					<option value="Manu">Manu</option>
+					<option value="Gledson">Gledson</option>
+					<option value="Gledson again">Gledson again</option>
 				</select>
 				<button>Add Post</button>
 			</div>
