@@ -1,17 +1,9 @@
-import * as React from "react";
-import { BrowserRouter } from "react-router-dom";
-import Blog from "./containers/Blog/Blog";
+import React from "react";
 
-class App extends React.Component {
-	render() {
-		return (
-			<BrowserRouter>
-				<div className="App">
-					<Blog />
-				</div>
-			</BrowserRouter>
-		);
-	}
-}
+import Ingredients from "./components/Ingredients/Ingredients";
+
+const App: React.FunctionComponent = (props) => {
+	return <Ingredients />;
+};
 
 export default App;
