@@ -3,8 +3,8 @@ import * as React from "react";
 import "./Post.css";
 
 type PostsProps = {
-    title: string;
-    author: string;
+	title: string;
+	author: string;
 };
 
 const post: React.FunctionComponent<PostsProps> = (props) => (
