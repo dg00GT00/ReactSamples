@@ -1,4 +1,5 @@
 import * as React from "react";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 
 import "./Post.css";
 
@@ -7,13 +8,18 @@ type PostsProps = {
 	author: string;
 };
 
-const post: React.FunctionComponent<PostsProps> = (props) => (
-	<article className="Post">
-		<h1>{props.title}</h1>
-		<div className="Info">
-			<div className="Author">{props.author}</div>
-		</div>
-	</article>
-);
+const post: React.FunctionComponent<
+	RouteComponentProps<PostsProps> & PostsProps
+> = (props) => {
+	console.log(props);
+	return (
+		<article className="Post">
+			<h1>{props.title}</h1>
+			<div className="Info">
+				<div className="Author">{props.author}</div>
+			</div>
+		</article>
+	);
+};
 
-export default post;
+export default withRouter(post);
