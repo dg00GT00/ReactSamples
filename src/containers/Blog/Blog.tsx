@@ -44,6 +44,14 @@ class Blog extends React.Component<{}, BlogState> {
 
 		return (
 			<div>
+                <header>
+                    <nav>
+                        <ul>
+                            <li><a href="/">Home</a></li>
+                            <li><a href="/new-posts">New Post</a></li>
+                        </ul>
+                    </nav>
+                </header>
 				<section className="Posts">{posts}</section>
 				<section>
 					<FullPost />
