@@ -5,7 +5,7 @@ import "./Post.css";
 
 type PostsProps = {
 	title: string;
-	author: string;
+    author: string;
 };
 
 const post: React.FunctionComponent<

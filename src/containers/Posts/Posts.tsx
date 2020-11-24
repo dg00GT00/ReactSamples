@@ -1,7 +1,7 @@
 import * as React from "react";
 import axios from "axios";
 import Post from "../../components/Post/Post";
-import { RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, Link } from "react-router-dom";
 
 type BlogState = {
 	posts: PostsType[];
@@ -22,6 +22,7 @@ class Posts extends React.Component<RouteComponentProps, BlogState> {
 		author: "",
 	};
 
+	postSelectedHandler = (id: number) => {};
 	componentDidMount() {
 		console.log(this.props);
 
@@ -41,7 +42,11 @@ class Posts extends React.Component<RouteComponentProps, BlogState> {
 
 	render() {
 		const posts = this.state.posts.map((post) => {
-			return <Post key={post.id} title={post.title} author={post.author} />;
+			return (
+				<Link to={"/" + post.id} key={post.id}>
+					<Post title={post.title} author={post.author} />
+				</Link>
+			);
 		});
 
 		return <section className="Posts">{posts}</section>;
