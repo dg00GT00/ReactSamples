@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import IngredientForm from "./IngredientForm";
 import Search from "./Search";
@@ -51,7 +51,7 @@ const Ingredients = () => {
 			},
 		})
 			.then((response) => {
-				// The response type come form 'firebase', in which at the moment is unknown
+				// The response type come from 'firebase', in which at the moment is unknown
 				return response.json();
 			})
 			.then((body) => {
@@ -62,12 +62,18 @@ const Ingredients = () => {
 			});
 	};
 
+	const filterIngredientsHandler = useCallback(
+		(filteredIngredients: IngredientsTypes[]): void => {
+			setUserIngredients(filteredIngredients);
+		}, []
+	);
+
 	return (
 		<div className="App">
 			<IngredientForm onAddIngredient={addIngredientHandler} />
 
 			<section>
-				<Search />
+				<Search onLoadIngredients={filterIngredientsHandler} />
 				<IngredientsList ingredients={userIngredients} />
 			</section>
 		</div>
