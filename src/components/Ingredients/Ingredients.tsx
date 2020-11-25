@@ -65,8 +65,24 @@ const Ingredients = () => {
 	const filterIngredientsHandler = useCallback(
 		(filteredIngredients: IngredientsTypes[]): void => {
 			setUserIngredients(filteredIngredients);
-		}, []
+		},
+		[]
 	);
+
+	const removeIngredientsHandler = (ingredientId: string): void => {
+		fetch(
+			`https://react-hooks-2b229.firebaseio.com/ingredients/${ingredientId}.json`,
+			{
+				method: "DELETE",
+			}
+		).then((response) => {
+			setUserIngredients((prevIngredients) => {
+				return prevIngredients.filter(
+					(ingredient) => ingredient.id !== ingredientId
+				);
+			});
+		});
+	};
 
 	return (
 		<div className="App">
@@ -74,7 +90,10 @@ const Ingredients = () => {
 
 			<section>
 				<Search onLoadIngredients={filterIngredientsHandler} />
-				<IngredientsList ingredients={userIngredients} />
+				<IngredientsList
+					ingredients={userIngredients}
+					onRemoveItem={removeIngredientsHandler}
+				/>
 			</section>
 		</div>
 	);
