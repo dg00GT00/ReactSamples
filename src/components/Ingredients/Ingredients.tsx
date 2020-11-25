@@ -16,10 +16,22 @@ function Ingredients() {
 	);
 
 	const addIngredientHandler = (ingredient: IngredientsTypes): void => {
-		setUserIngredients((prevIngredients) => [
-			...prevIngredients,
-			{ ...ingredient, id: Math.random() },
-		]);
+		fetch("https://react-hooks-2b229.firebaseio.com/ingredients.json", {
+			method: "POST",
+			body: JSON.stringify({ ingredient }),
+			headers: {
+				"Content-Type": "application/json",
+			},
+		})
+        .then((response) => {
+            return response.json();
+        })
+        .then((body) => {
+            setUserIngredients((prevIngredients) => [
+                ...prevIngredients,
+                { ...ingredient, id: body.name },
+            ]);
+        });
 	};
 
 	return (
