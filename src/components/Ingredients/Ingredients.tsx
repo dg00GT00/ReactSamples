@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useReducer, useState } from "react";
 
 import IngredientForm from "./IngredientForm";
 import Search from "./Search";
@@ -15,10 +15,29 @@ type ResponseIngredients = {
 	[id: string]: IngredientsTypes;
 };
 
+type IngredientsActions =
+	| { type: "SET"; ingredients: IngredientsTypes[] }
+	| { type: "ADD"; ingredients: IngredientsTypes }
+	| { type: "DELETE"; id: string };
+
+const ingredientReducer = (
+	currentIngredients: IngredientsTypes[],
+	action: IngredientsActions
+): IngredientsTypes[] => {
+	switch (action.type) {
+		case "SET":
+			return action.ingredients;
+		case "ADD":
+			return [...currentIngredients, action.ingredients];
+		case "DELETE":
+			return currentIngredients.filter((ing) => ing.id !== action.id);
+		default:
+			throw new Error("Should not get there!");
+	}
+};
+
 const Ingredients = () => {
-	const [userIngredients, setUserIngredients] = useState<IngredientsTypes[]>(
-		[]
-	);
+	const [userIngredients, dispatch] = useReducer(ingredientReducer, []);
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
@@ -38,10 +57,7 @@ const Ingredients = () => {
 						});
 					}
 				}
-				setUserIngredients((prevIngredients) => [
-					...prevIngredients,
-					...loadedIngredients,
-				]);
+				dispatch({ type: "SET", ingredients: loadedIngredients });
 			});
 	}, []); // It should set an empty array at 'useEffect' so that it behaviors like 'componentDidMount' class lifecycle hook
 
@@ -60,16 +76,16 @@ const Ingredients = () => {
 			})
 			.then((body) => {
 				setIsLoading(false);
-				setUserIngredients((prevIngredients) => [
-					...prevIngredients,
-					{ ...ingredient, id: body.name },
-				]);
+				dispatch({
+					type: "ADD",
+					ingredients: { ...ingredient, id: body.name },
+				});
 			});
 	};
 
 	const filterIngredientsHandler = useCallback(
 		(filteredIngredients: IngredientsTypes[]): void => {
-			setUserIngredients(filteredIngredients);
+			dispatch({ type: "SET", ingredients: filteredIngredients });
 		},
 		[]
 	);
@@ -77,18 +93,14 @@ const Ingredients = () => {
 	const removeIngredientsHandler = (ingredientId: string): void => {
 		setIsLoading(true);
 		fetch(
-			`https://react-hooks-2b229.firebaseio.com/ingredients/${ingredientId}.son`,
+			`https://react-hooks-2b229.firebaseio.com/ingredients/${ingredientId}.json`,
 			{
 				method: "DELETE",
 			}
 		)
 			.then((response) => {
 				setIsLoading(false);
-				setUserIngredients((prevIngredients) => {
-					return prevIngredients.filter(
-						(ingredient) => ingredient.id !== ingredientId
-					);
-				});
+				dispatch({ type: "DELETE", id: ingredientId });
 			})
 			.catch((error) => setError("Something went wrong!"));
 	};
