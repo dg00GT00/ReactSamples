@@ -3,17 +3,27 @@ import React, { useState } from "react";
 import Card from "../UI/Card";
 import "./IngredientForm.css";
 
-type IngredientState = {
-	title?: string;
-	amount?: string;
+type IngredientsTypes = {
+	id: number;
+	title: string;
+	amount: number;
 };
 
-const IngredientForm = React.memo((props) => {
+type IngredientFromProps = {
+	onAddIngredient: (ingredient: IngredientsTypes) => void;
+};
+
+const IngredientForm = React.memo<IngredientFromProps>((props) => {
 	const [enteredTitle, setEnteredTitle] = useState("");
 	const [enteredAmount, setEnteredAmount] = useState("");
 
 	const submitHandler: React.FormEventHandler = (event) => {
 		event.preventDefault();
+		props.onAddIngredient({
+			id: 0, // This id is only a placeholder. It will be overridden by Ingredient component
+			title: enteredTitle,
+			amount: +enteredAmount,
+		});
 		// ...
 	};
 
