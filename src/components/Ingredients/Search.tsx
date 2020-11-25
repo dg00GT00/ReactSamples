@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import Card from "../UI/Card";
 import "./Search.css";
@@ -20,15 +20,17 @@ type SearchProps = {
 const Search = React.memo<SearchProps>((props) => {
 	const [enteredFilter, setEnteredFilter] = useState("");
 	const { onLoadIngredients } = props;
+	const inputRef = useRef<HTMLInputElement>(null!); // Needed initialize with null due to Typescript requirements
 
-	useEffect(() => {
+	const fetchedIngredients = useCallback(function fetchedIngredients(): void {
 		// Query for filter on 'firebase' API
 		const query =
 			enteredFilter.length === 0
 				? ""
 				: `?orderBy="title"&equalTo="${enteredFilter}"`;
 
-		if (enteredFilter !== "") { // Only fetch data after the first key entered on the search field
+		if (enteredFilter !== "" && enteredFilter === inputRef.current.value) {
+			// Only fetch data after the first key entered on the search field
 			fetch("https://react-hooks-2b229.firebaseio.com/ingredients.json" + query)
 				.then<ResponseIngredients>((response) => {
 					return response.json();
@@ -47,7 +49,14 @@ const Search = React.memo<SearchProps>((props) => {
 					onLoadIngredients(loadedIngredients);
 				});
 		}
-	}, [enteredFilter, onLoadIngredients]);
+	}, [enteredFilter, onLoadIngredients, inputRef])
+
+	useEffect(() => {
+		const timer = setTimeout(() => fetchedIngredients(), 500);
+		return () => { // Cleanup function
+			clearTimeout(timer);
+		};
+	}, [fetchedIngredients]);
 
 	return (
 		<section className="search">
@@ -55,6 +64,7 @@ const Search = React.memo<SearchProps>((props) => {
 				<div className="search-input">
 					<label>Filter by Title</label>
 					<input
+						ref={inputRef}
 						type="text"
 						value={enteredFilter}
 						onChange={(event) => setEnteredFilter(event.target.value)}
