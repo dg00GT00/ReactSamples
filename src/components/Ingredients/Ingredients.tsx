@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer, useState } from "react";
+import React, { useCallback, useEffect, useReducer } from "react";
 
 import IngredientForm from "./IngredientForm";
 import Search from "./Search";
@@ -36,10 +36,41 @@ const ingredientReducer = (
 	}
 };
 
+type HttpState = {
+	loading: boolean;
+	error: null | string;
+};
+
+type HttpActions =
+	| { type: "SEND" }
+	| { type: "RESPONSE" }
+	| { type: "ERROR"; errorData: string }
+	| { type: "CLEAR" };
+
+const httpReducer = (
+	currentHttpState: HttpState,
+	action: HttpActions
+): HttpState => {
+	switch (action.type) {
+		case "SEND":
+			return { loading: true, error: null };
+		case "RESPONSE":
+			return { ...currentHttpState, loading: false };
+		case "ERROR":
+			return { loading: false, error: action.errorData };
+		case "CLEAR":
+			return { ...currentHttpState, error: null };
+		default:
+			throw new Error("Should not be reached");
+	}
+};
+
 const Ingredients = () => {
 	const [userIngredients, dispatch] = useReducer(ingredientReducer, []);
-	const [isLoading, setIsLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const [httpState, dispatchHttp] = useReducer(httpReducer, {
+		loading: false,
+		error: null,
+	});
 
 	useEffect(() => {
 		fetch("https://react-hooks-2b229.firebaseio.com/ingredients.json")
@@ -62,7 +93,7 @@ const Ingredients = () => {
 	}, []); // It should set an empty array at 'useEffect' so that it behaviors like 'componentDidMount' class lifecycle hook
 
 	const addIngredientHandler = (ingredient: IngredientsTypes): void => {
-		setIsLoading(true);
+		dispatchHttp({ type: "SEND" });
 		fetch("https://react-hooks-2b229.firebaseio.com/ingredients.json", {
 			method: "POST",
 			body: JSON.stringify(ingredient),
@@ -75,7 +106,7 @@ const Ingredients = () => {
 				return response.json();
 			})
 			.then((body) => {
-				setIsLoading(false);
+				dispatchHttp({ type: "RESPONSE" });
 				dispatch({
 					type: "ADD",
 					ingredients: { ...ingredient, id: body.name },
@@ -91,31 +122,32 @@ const Ingredients = () => {
 	);
 
 	const removeIngredientsHandler = (ingredientId: string): void => {
-		setIsLoading(true);
+		dispatchHttp({ type: "SEND" });
 		fetch(
 			`https://react-hooks-2b229.firebaseio.com/ingredients/${ingredientId}.json`,
 			{
 				method: "DELETE",
 			}
 		)
-			.then((response) => {
-				setIsLoading(false);
+			.then((_) => {
+				dispatchHttp({ type: "RESPONSE" });
 				dispatch({ type: "DELETE", id: ingredientId });
 			})
-			.catch((error) => setError("Something went wrong!"));
-	};
-
-	const clearError = () => {
-		setError(null);
-		setIsLoading(false);
+			.catch((_) =>
+				dispatchHttp({ type: "ERROR", errorData: "Something went wrong" })
+			);
 	};
 
 	return (
 		<div className="App">
-			{error && <ErrorModal onClose={clearError}>{error}</ErrorModal>}
+			{httpState.error && (
+				<ErrorModal onClose={() => dispatchHttp({ type: "CLEAR" })}>
+					{httpState.error}
+				</ErrorModal>
+			)}
 			<IngredientForm
 				onAddIngredient={addIngredientHandler}
-				loading={isLoading}
+				loading={httpState.loading}
 			/>
 			<section>
 				<Search onLoadIngredients={filterIngredientsHandler} />
