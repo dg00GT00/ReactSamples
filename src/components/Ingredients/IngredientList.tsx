@@ -4,11 +4,11 @@ import "./IngredientList.css";
 
 type IngredientsProps = {
 	ingredients: {
-		id: number;
+		id: string;
 		title: string;
-		amount: number;
+		amount: string;
 	}[];
-	onRemoveItem?: (id: number) => void;
+	onRemoveItem?: (id: string) => void;
 };
 
 const IngredientList: React.FunctionComponent<IngredientsProps> = (props) => {

@@ -1,13 +1,9 @@
-import React, { Suspense, SuspenseProps } from "react";
+import React from "react";
 
 import Ingredients from "./components/Ingredients/Ingredients";
 
-const App: React.FunctionComponent<SuspenseProps> = (props) => {
-	return (
-        <Suspense fallback={"loading..."}>
-            <Ingredients />
-        </Suspense>
-    );
+const App: React.FunctionComponent = () => {
+	return <Ingredients />;
 };
 
 export default App;

@@ -4,9 +4,9 @@ import Card from "../UI/Card";
 import "./IngredientForm.css";
 
 type IngredientsTypes = {
-	id: number;
+	id: string;
 	title: string;
-	amount: number;
+	amount: string;
 };
 
 type IngredientFromProps = {
@@ -20,9 +20,9 @@ const IngredientForm = React.memo<IngredientFromProps>((props) => {
 	const submitHandler: React.FormEventHandler = (event) => {
 		event.preventDefault();
 		props.onAddIngredient({
-			id: 0, // This id is only a placeholder. It will be overridden by Ingredient component
+			id: "", // This id is only a placeholder. It will be overridden by Ingredient component
 			title: enteredTitle,
-			amount: +enteredAmount,
+			amount: enteredAmount,
 		});
 		// ...
 	};
