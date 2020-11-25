@@ -1,9 +1,10 @@
-import React from "react";
+import React, { ReactNode } from "react";
 
 import "./ErrorModal.css";
 
 type ErrorModalProps = {
 	onClose: React.MouseEventHandler;
+	children?: ReactNode;
 };
 
 const ErrorModal = React.memo<ErrorModalProps>((props) => {
