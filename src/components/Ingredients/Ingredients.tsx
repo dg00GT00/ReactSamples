@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useReducer } from "react";
+import React, { useCallback, useEffect, useMemo, useReducer } from "react";
 
 import IngredientForm from "./IngredientForm";
 import Search from "./Search";
 import IngredientsList from "./IngredientList";
 import ErrorModal from "../UI/ErrorModal";
+import { useHttp } from "../../hooks/Http";
 
 type IngredientsTypes = {
 	id: string;
@@ -36,41 +37,9 @@ const ingredientReducer = (
 	}
 };
 
-type HttpState = {
-	loading: boolean;
-	error: null | string;
-};
-
-type HttpActions =
-	| { type: "SEND" }
-	| { type: "RESPONSE" }
-	| { type: "ERROR"; errorData: string }
-	| { type: "CLEAR" };
-
-const httpReducer = (
-	currentHttpState: HttpState,
-	action: HttpActions
-): HttpState => {
-	switch (action.type) {
-		case "SEND":
-			return { loading: true, error: null };
-		case "RESPONSE":
-			return { ...currentHttpState, loading: false };
-		case "ERROR":
-			return { loading: false, error: action.errorData };
-		case "CLEAR":
-			return { ...currentHttpState, error: null };
-		default:
-			throw new Error("Should not be reached");
-	}
-};
-
 const Ingredients = () => {
 	const [userIngredients, dispatch] = useReducer(ingredientReducer, []);
-	const [httpState, dispatchHttp] = useReducer(httpReducer, {
-		loading: false,
-		error: null,
-	});
+	const { loading, error, data, sendRequest, requestId } = useHttp();
 
 	useEffect(() => {
 		fetch("https://react-hooks-2b229.firebaseio.com/ingredients.json")
@@ -93,26 +62,16 @@ const Ingredients = () => {
 	}, []); // It should set an empty array at 'useEffect' so that it behaviors like 'componentDidMount' class lifecycle hook
 
 	const addIngredientHandler = (ingredient: IngredientsTypes): void => {
-		dispatchHttp({ type: "SEND" });
-		fetch("https://react-hooks-2b229.firebaseio.com/ingredients.json", {
-			method: "POST",
-			body: JSON.stringify(ingredient),
-			headers: {
-				"Content-Type": "application/json",
-			},
-		})
-			.then((response) => {
-				// The response type come from 'firebase', in which at the moment is unknown
-				return response.json();
-			})
-			.then((body) => {
-				dispatchHttp({ type: "RESPONSE" });
-				dispatch({
-					type: "ADD",
-					ingredients: { ...ingredient, id: body.name },
-				});
-			});
+		sendRequest(
+			"https://react-hooks-2b229.firebaseio.com/ingredients.json",
+			"POST",
+			JSON.stringify(ingredient)
+		);
 	};
+
+	useEffect(() => {
+		dispatch({ type: "DELETE", id: requestId! }); // 'requestId' makes reference to the ingredients id
+	}, [data, requestId]);
 
 	const filterIngredientsHandler = useCallback(
 		(filteredIngredients: IngredientsTypes[]): void => {
@@ -121,34 +80,35 @@ const Ingredients = () => {
 		[]
 	);
 
-	const removeIngredientsHandler = (ingredientId: string): void => {
-		dispatchHttp({ type: "SEND" });
-		fetch(
-			`https://react-hooks-2b229.firebaseio.com/ingredients/${ingredientId}.json`,
-			{
-				method: "DELETE",
-			}
-		)
-			.then((_) => {
-				dispatchHttp({ type: "RESPONSE" });
-				dispatch({ type: "DELETE", id: ingredientId });
-			})
-			.catch((_) =>
-				dispatchHttp({ type: "ERROR", errorData: "Something went wrong" })
+	const removeIngredientsHandler = useCallback(
+		(ingredientId: string): void => {
+			sendRequest(
+				`https://react-hooks-2b229.firebaseio.com/ingredients/${ingredientId}.json`,
+				"DELETE",
+				undefined,
+				ingredientId
 			);
-	};
+		},
+		[sendRequest]
+	);
+
+	const ingredientsList = useMemo(() => {
+		return (
+			<IngredientForm
+				onAddIngredient={addIngredientHandler}
+				loading={loading}
+			/>
+		);
+	}, [userIngredients, removeIngredientsHandler]);
 
 	return (
 		<div className="App">
-			{httpState.error && (
+			{error && (
 				<ErrorModal onClose={() => dispatchHttp({ type: "CLEAR" })}>
-					{httpState.error}
+					{error}
 				</ErrorModal>
 			)}
-			<IngredientForm
-				onAddIngredient={addIngredientHandler}
-				loading={httpState.loading}
-			/>
+			{ingredientsList}
 			<section>
 				<Search onLoadIngredients={filterIngredientsHandler} />
 				<IngredientsList
